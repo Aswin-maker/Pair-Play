@@ -17,10 +17,10 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
 # Include Routers with authentication
-app.include_router(packages.router, prefix="/packages", tags=["Packages"], dependencies=[Depends(verify_token)])
-app.include_router(leads.router, prefix="/leads", tags=["Leads"], dependencies=[Depends(verify_token)])
-app.include_router(payments.router, prefix="/payments", tags=["Payments"], dependencies=[Depends(verify_token)])
-app.include_router(ai.router, prefix="/ai", tags=["AI & Feedback"], dependencies=[Depends(verify_token)])
+app.include_router(packages.router, prefix="/packages", tags=["Packages"])
+app.include_router(leads.router, prefix="/leads", tags=["Leads"])
+app.include_router(payments.router, prefix="/payments", tags=["Payments"])
+app.include_router(ai.router, prefix="/ai", tags=["AI & Feedback"])
 
 @app.get("/")
 async def root():

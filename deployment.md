@@ -3,7 +3,7 @@
 ## Prerequisites
 - A GitHub repository containing this code.
 - A Render account (https://render.com).
-- API Keys for Google Sheets, Twilio, Razorpay, and OpenAI.
+- API Keys for Google Sheets, Vonage, Razorpay, and OpenAI.
 
 ## Steps
 
@@ -27,9 +27,9 @@
    - Scroll down to "Environment Variables" and add the following:
      - `PYTHON_VERSION`: `3.9.0`
      - `GOOGLE_SHEETS_CREDENTIALS_JSON`: (Paste your JSON content here)
-     - `TWILIO_ACCOUNT_SID`: (Your SID)
-     - `TWILIO_AUTH_TOKEN`: (Your Token)
-     - `TWILIO_PHONE_NUMBER`: (Your Number)
+     - `VONAGE_API_KEY`: (Your Vonage API Key)
+     - `VONAGE_API_SECRET`: (Your Vonage API Secret)
+     - `VONAGE_SMS_NUMBER`: (Your Vonage SMS Number)
      - `RAZORPAY_KEY_ID`: (Your Key ID)
      - `RAZORPAY_KEY_SECRET`: (Your Secret)
      - `OPENAI_API_KEY`: (Your Key)

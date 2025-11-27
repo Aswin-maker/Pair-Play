@@ -1,51 +1,59 @@
+import vonage
 import random
 from app.core.config import settings
-from twilio.rest import Client
 
 class OTPService:
     def __init__(self):
+        self.otp_storage = {}  # In-memory storage for demo purposes
         self.client = None
-        self.mock_otp_store = {}  # Store OTPs in memory for mock/testing
-        self.setup_twilio()
-
-    def setup_twilio(self):
-        if settings.TWILIO_ACCOUNT_SID and settings.TWILIO_AUTH_TOKEN:
+        self.sms = None
+        
+        if settings.VONAGE_API_KEY and settings.VONAGE_API_SECRET:
             try:
-                self.client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+                self.client = vonage.Client(
+                    key=settings.VONAGE_API_KEY,
+                    secret=settings.VONAGE_API_SECRET
+                )
+                self.sms = vonage.Sms(self.client)
+                print("✅ Vonage Client Initialized")
             except Exception as e:
-                print(f"Twilio setup failed: {e}")
+                print(f"⚠️ Vonage Initialization Failed: {e}")
+        else:
+            print("⚠️ Vonage Credentials Missing - Using Mock Mode")
 
-    def generate_otp(self):
+    def generate_otp(self) -> str:
         return str(random.randint(100000, 999999))
 
-    def send_otp(self, phone: str):
+    def send_otp(self, phone: str) -> str:
         otp = self.generate_otp()
+        self.otp_storage[phone] = otp
         
-        # If Twilio is configured, send via SMS
-        if self.client and settings.TWILIO_PHONE_NUMBER:
+        if self.sms and settings.VONAGE_SMS_NUMBER:
             try:
-                message = self.client.messages.create(
-                    body=f"Your Travel Chatbot Verification Code is: {otp}",
-                    from_=settings.TWILIO_PHONE_NUMBER,
-                    to=phone
-                )
-                # In a real app, you might want to store this in Redis/DB with expiry
-                self.mock_otp_store[phone] = otp
-                return {"status": "success", "message": "OTP sent via Twilio", "sid": message.sid}
+                print(f"📤 Sending OTP via Vonage to {phone}...")
+                response = self.sms.send_message({
+                    "from": settings.VONAGE_SMS_NUMBER,
+                    "to": phone,
+                    "text": f"Your OTP code is {otp}",
+                })
+                
+                if response["messages"][0]["status"] == "0":
+                    print("✅ SMS sent successfully")
+                else:
+                    print(f"❌ SMS failed: {response['messages'][0]['error-text']}")
+                    
             except Exception as e:
-                print(f"Error sending SMS: {e}")
-                # Fallback to mock if SMS fails
-        
-        # Mock behavior
-        self.mock_otp_store[phone] = otp
-        print(f"MOCK OTP for {phone}: {otp}")
-        return {"status": "success", "message": "OTP sent (Mock)", "mock_otp": otp}
+                print(f"❌ Error sending SMS: {e}")
+        else:
+            print(f"🔔 [MOCK OTP] To: {phone} | Code: {otp}")
+            
+        return otp
 
-    def verify_otp(self, phone: str, otp: str):
-        if phone in self.mock_otp_store:
-            if self.mock_otp_store[phone] == otp:
-                del self.mock_otp_store[phone]  # OTP used
-                return True
+    def verify_otp(self, phone: str, otp: str) -> bool:
+        stored_otp = self.otp_storage.get(phone)
+        if stored_otp and stored_otp == otp:
+            del self.otp_storage[phone]  # OTP is one-time use
+            return True
         return False
 
 otp_service = OTPService()

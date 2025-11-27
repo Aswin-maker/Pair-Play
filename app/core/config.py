@@ -11,10 +11,10 @@ class Settings(BaseSettings):
     # Google Sheets
     GOOGLE_SHEETS_CREDENTIALS_JSON: str = os.getenv("GOOGLE_SHEETS_CREDENTIALS_JSON", "")
     
-    # Twilio
-    TWILIO_ACCOUNT_SID: str = os.getenv("TWILIO_ACCOUNT_SID", "")
-    TWILIO_AUTH_TOKEN: str = os.getenv("TWILIO_AUTH_TOKEN", "")
-    TWILIO_PHONE_NUMBER: str = os.getenv("TWILIO_PHONE_NUMBER", "")
+    # Vonage (Nexmo)
+    VONAGE_API_KEY: str = os.getenv("VONAGE_API_KEY", "")
+    VONAGE_API_SECRET: str = os.getenv("VONAGE_API_SECRET", "")
+    VONAGE_SMS_NUMBER: str = os.getenv("VONAGE_SMS_NUMBER", "")
     
     # Razorpay
     RAZORPAY_KEY_ID: str = os.getenv("RAZORPAY_KEY_ID", "")

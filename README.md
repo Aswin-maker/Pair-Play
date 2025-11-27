@@ -5,7 +5,7 @@ A production-ready FastAPI backend for a Travel & Tourism Chatbot, designed to i
 ## Features
 - **Package Management**: Fetch and filter travel packages from Google Sheets.
 - **Lead Generation**: Capture leads and save them to Google Sheets.
-- **OTP Verification**: Verify phone numbers using Twilio (or Mock mode).
+- **OTP Verification**: Verify phone numbers using Vonage (Nexmo) or Mock mode.
 - **Payments**: Generate payment links using Razorpay.
 - **AI Recommendations**: Get travel suggestions using OpenAI or Gemini.
 - **Feedback**: Collect user feedback.
@@ -18,7 +18,7 @@ Zoho SalesIQ Bot  -->  FastAPI Backend (Render)
                             |--> Google Sheets (Database)
                             |    (Packages, Leads, Feedback)
                             |
-                            |--> Twilio (OTP Service)
+                            |--> Vonage (OTP Service)
                             |
                             |--> Razorpay (Payment Gateway)
                             |
@@ -34,7 +34,7 @@ Zoho SalesIQ Bot  -->  FastAPI Backend (Render)
    ```
 3. **Configure Environment**:
    - Copy `.env.example` to `.env`
-   - Fill in your API keys (Google Sheets, Twilio, Razorpay, OpenAI).
+   - Fill in your API keys (Google Sheets, Vonage, Razorpay, OpenAI).
 4. **Run Locally**:
    ```bash
    uvicorn app.main:app --reload
