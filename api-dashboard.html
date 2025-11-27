@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Chatbot Backend - API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .status {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .link-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .link-card p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .endpoints {
+            margin-top: 40px;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 10px;
+        }
+        
+        .get { background: #10b981; color: white; }
+        .post { background: #3b82f6; color: white; }
+        
+        .code {
+            background: #1e293b;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        .auth-info {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .auth-info h3 {
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Travel Chatbot Backend</h1>
+        <div class="status">✅ Server Running on http://localhost:8000</div>
+        
+        <div class="auth-info">
+            <h3>🔐 Authentication Required</h3>
+            <p>All API endpoints (except root) require Bearer Token authentication:</p>
+            <div class="code">Authorization: Bearer supersecretkey</div>
+        </div>
+        
+        <div class="links">
+            <a href="http://localhost:8000/docs" target="_blank" class="link-card">
+                <h3>📚 Swagger UI</h3>
+                <p>Interactive API documentation. Test all endpoints with a beautiful UI.</p>
+            </a>
+            
+            <a href="http://localhost:8000/redoc" target="_blank" class="link-card">
+                <h3>📖 ReDoc</h3>
+                <p>Alternative documentation with a clean, readable interface.</p>
+            </a>
+            
+            <a href="http://localhost:8000/" target="_blank" class="link-card">
+                <h3>🏠 Root Endpoint</h3>
+                <p>Test the basic connection to your backend server.</p>
+            </a>
+        </div>
+        
+        <div class="endpoints">
+            <h2 style="margin-bottom: 20px; color: #1e293b;">Available Endpoints</h2>
+            
+            <div class="endpoint">
+                <h4><span class="method get">GET</span> /packages/</h4>
+                <p>Fetch all travel packages (returns mock data: Bali, Paris, Kerala)</p>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /packages/search</h4>
+                <p>Search packages by location, budget, or days</p>
+                <div class="code">{"location": "Bali", "max_budget": 1000, "days": 5}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /leads/send-otp</h4>
+                <p>Send OTP to phone number (check terminal for OTP code)</p>
+                <div class="code">{"phone": "+1234567890"}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /leads/verify-otp</h4>
+                <p>Verify the OTP code</p>
+                <div class="code">{"phone": "+1234567890", "otp": "123456"}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /leads/create-lead</h4>
+                <p>Create a new customer lead</p>
+                <div class="code">{"customer_name": "John Doe", "email": "john@example.com", "phone": "+1234567890", "selected_package": "Bali Bliss"}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /payments/generate-invoice</h4>
+                <p>Generate a payment link (Razorpay test mode)</p>
+                <div class="code">{"customer_name": "John Doe", "email": "john@example.com", "phone": "+1234567890", "amount": 800, "description": "Bali Trip"}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /ai/recommend</h4>
+                <p>Get AI-powered travel recommendations</p>
+                <div class="code">{"query": "beach vacation", "preferences": {"budget": 1000, "days": 5}}</div>
+            </div>
+            
+            <div class="endpoint">
+                <h4><span class="method post">POST</span> /ai/feedback</h4>
+                <p>Submit customer feedback</p>
+                <div class="code">{"email": "john@example.com", "package_name": "Bali Bliss", "feedback": "Amazing experience!"}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

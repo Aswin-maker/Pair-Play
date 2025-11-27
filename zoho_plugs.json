@@ -1,0 +1,101 @@
+{
+    "plugs": [
+        {
+            "name": "Get Packages",
+            "url": "https://your-app.onrender.com/packages/",
+            "method": "GET",
+            "headers": {
+                "Authorization": "Bearer supersecretkey"
+            },
+            "response_mapping": {
+                "packages": "$"
+            }
+        },
+        {
+            "name": "Search Packages",
+            "url": "https://your-app.onrender.com/packages/search",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "location": "${location}",
+                "max_budget": "${budget}",
+                "days": "${days}"
+            }
+        },
+        {
+            "name": "Send OTP",
+            "url": "https://your-app.onrender.com/leads/send-otp",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "phone": "${visitor_phone}"
+            }
+        },
+        {
+            "name": "Verify OTP",
+            "url": "https://your-app.onrender.com/leads/verify-otp",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "phone": "${visitor_phone}",
+                "otp": "${otp_input}"
+            }
+        },
+        {
+            "name": "Create Lead",
+            "url": "https://your-app.onrender.com/leads/create-lead",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "customer_name": "${visitor_name}",
+                "email": "${visitor_email}",
+                "phone": "${visitor_phone}",
+                "selected_package": "${selected_package}"
+            }
+        },
+        {
+            "name": "Generate Invoice",
+            "url": "https://your-app.onrender.com/payments/generate-invoice",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "customer_name": "${visitor_name}",
+                "email": "${visitor_email}",
+                "phone": "${visitor_phone}",
+                "amount": "${amount}",
+                "description": "Booking for ${selected_package}"
+            }
+        },
+        {
+            "name": "AI Recommend",
+            "url": "https://your-app.onrender.com/ai/recommend",
+            "method": "POST",
+            "headers": {
+                "Authorization": "Bearer supersecretkey",
+                "Content-Type": "application/json"
+            },
+            "payload": {
+                "query": "${user_query}",
+                "preferences": {
+                    "budget": "${budget}",
+                    "days": "${days}"
+                }
+            }
+        }
+    ]
+}
