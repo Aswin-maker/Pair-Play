@@ -16,18 +16,20 @@ async def create_payment_link(amount_in_rupees: int, customer: dict, description
         "amount": amount_in_rupees * 100,
         "currency": "INR",
         "accept_partial": False,
-        "reference_id": "pkg_"+str(customer.get("email","unknown")),
-        "description": description,
         "customer": {
             "name": customer.get("name"),
             "email": customer.get("email"),
             "contact": customer.get("phone"),
         },
+        "description": description,
+        "callback_url": "https://yourfrontend.com/payment/success",
+        "callback_method": "get",
         "notify": {"sms": True, "email": True},
         "reminder_enable": True,
     }
     try:
-        res = client.invoice.create(data)  # or use payment link API if preferred
+        # Use payment_link.create instead of invoice.create
+        res = client.payment_link.create(data)
         return res
     except Exception as e:
         print(f"Razorpay Error: {e}")

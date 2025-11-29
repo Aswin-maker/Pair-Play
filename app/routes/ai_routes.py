@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.services.ai_service import recommend_packages
+from ..services.ai_service import recommend_packages, suggest_packages
 from app.services.google_sheets import read_values
 
 router = APIRouter()
@@ -18,3 +18,9 @@ async def ai_recommend(query: dict):
         })
     answer = await recommend_packages(query.get("text",""), packages)
     return {"recommendation": answer}
+
+@router.post("/ai-suggest")
+async def ai_suggest(data: dict):
+    text = data.get("query", "")
+    result = await suggest_packages(text)
+    return {"suggestions": result}
