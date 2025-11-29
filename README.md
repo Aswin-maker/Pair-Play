@@ -53,4 +53,52 @@ Zoho SalesIQ Bot  -->  FastAPI Backend (Render)
 - `POST /ai/feedback`: Submit feedback.
 
 ## Deployment
-See [deployment.md](deployment.md) for instructions on deploying to Render.
+
+### Railway Deployment Configuration
+
+**Start command:**
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+**Build command:**
+```bash
+pip install -r requirements.txt
+```
+
+**Python Version:**
+Set `PYTHON_VERSION` to `3.10` in Environment Variables.
+
+**Environment Variables:**
+Ensure you add all variables from `.env.example` to your Railway project settings.
+
+### Deployment Steps
+
+1. **Initialize Git and Push:**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin <your-repo-url>
+   git push -u origin main
+   ```
+
+2. **Deploy on Railway:**
+   - Go to [Railway](https://railway.app/)
+   - Click **New Project** -> **Deploy from GitHub repo**
+   - Select your repository
+   - **Set Environment Variables:**
+     - Click on "Variables"
+     - Add all keys from `.env.example`
+     - Add `PYTHON_VERSION=3.10`
+   - **Set Commands:**
+     - **Build Command:** `pip install -r requirements.txt`
+     - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Settings:**
+     - Turn OFF "Auto Deploy" initially (recommended).
+   - Deploy!
+
+3. **Test Deployment:**
+   - Visit `https://<your-project>.railway.app/health` to check status.
+   - Visit `https://<your-project>.railway.app/docs` for API documentation.

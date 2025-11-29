@@ -1,8 +1,8 @@
-# Deployment Guide (Render)
+# Deployment Guide (Railway)
 
 ## Prerequisites
 - A GitHub repository containing this code.
-- A Render account (https://render.com).
+- A Railway account (https://railway.app).
 - API Keys for Google Sheets, Vonage, Razorpay, and OpenAI.
 
 ## Steps
@@ -13,19 +13,13 @@
    - Commit: `git commit -m "Initial commit"`
    - Push to your GitHub repository.
 
-2. **Create Web Service on Render**
-   - Go to Render Dashboard -> New -> Web Service.
+2. **Create Project on Railway**
+   - Go to Railway Dashboard -> New Project -> Deploy from GitHub repo.
    - Connect your GitHub repository.
-   - **Name**: `travel-chatbot-backend`
-   - **Region**: Choose closest to you.
-   - **Branch**: `main`
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port 10000`
 
-3. **Environment Variables**
-   - Scroll down to "Environment Variables" and add the following:
-     - `PYTHON_VERSION`: `3.9.0`
+3. **Configure Settings**
+   - **Environment Variables**:
+     - `PYTHON_VERSION`: `3.10`
      - `GOOGLE_SHEETS_CREDENTIALS_JSON`: (Paste your JSON content here)
      - `VONAGE_API_KEY`: (Your Vonage API Key)
      - `VONAGE_API_SECRET`: (Your Vonage API Secret)
@@ -33,13 +27,26 @@
      - `RAZORPAY_KEY_ID`: (Your Key ID)
      - `RAZORPAY_KEY_SECRET`: (Your Secret)
      - `OPENAI_API_KEY`: (Your Key)
-     - `SECRET_KEY`: (Your chosen secret key for Bearer Auth)
+     - `GEMINI_API_KEY`: (Your Key)
+     - `SECRET_KEY`: (Your chosen secret key)
+     - `ALGORITHM`: `HS256`
+     - `ACCESS_TOKEN_EXPIRE_MINUTES`: `30`
+
+   - **Build Command**:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+   - **Start Command**:
+     ```bash
+     uvicorn app.main:app --host 0.0.0.0 --port $PORT
+     ```
 
 4. **Deploy**
-   - Click "Create Web Service".
-   - Wait for the build to finish.
-   - Once live, your URL will be `https://travel-chatbot-backend.onrender.com`.
+   - Turn OFF "Auto Deploy" if you want to verify settings first.
+   - Click "Deploy".
+   - Once live, your URL will be `https://<project-name>.railway.app`.
 
 ## Testing
+- Visit `https://<project-name>.railway.app/docs` to see the Swagger UI.
 - Use the URL in Zoho SalesIQ Plugs.
-- Ensure you add the `Authorization: Bearer <YOUR_SECRET_KEY>` header in Zoho.

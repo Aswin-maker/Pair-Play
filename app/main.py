@@ -28,3 +28,13 @@ app.include_router(package_router, prefix="/api", tags=["Packages"])
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(payment_router, prefix="/api", tags=["Payments"])
 app.include_router(ai_router, prefix="/api", tags=["AI"])
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
