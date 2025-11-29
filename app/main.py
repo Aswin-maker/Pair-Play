@@ -1,27 +1,17 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.core.config import settings
-from app.routers import packages, leads, payments, ai
+from fastapi import FastAPI
+from app.routes import package_routes, auth_routes, payment_routes, ai_routes
+from fastapi.middleware.cors import CORSMiddleware
 
-security = HTTPBearer()
+app = FastAPI(title="Travel Chatbot Backend")
 
-async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    if credentials.credentials != settings.SECRET_KEY:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return credentials.credentials
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
-
-# Include Routers with authentication
-app.include_router(packages.router, prefix="/packages", tags=["Packages"])
-app.include_router(leads.router, prefix="/leads", tags=["Leads"])
-app.include_router(payments.router, prefix="/payments", tags=["Payments"])
-app.include_router(ai.router, prefix="/ai", tags=["AI & Feedback"])
-
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Travel Chatbot Backend"}
+app.include_router(package_routes.router, prefix="/api", tags=["Packages"])
+app.include_router(auth_routes.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(payment_routes.router, prefix="/api", tags=["Payments"])
+app.include_router(ai_routes.router, prefix="/api", tags=["AI"])

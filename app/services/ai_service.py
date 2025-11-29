@@ -1,50 +1,30 @@
-from app.core.config import settings
-import openai
-import google.generativeai as genai
+import os
+from openai import OpenAI
+from app.config import settings
 
-class AIService:
-    def __init__(self):
-        self.openai_client = None
-        self.gemini_configured = False
-        self.setup_ai()
+client = None
+if settings.OPENAI_API_KEY:
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-    def setup_ai(self):
-        # Setup OpenAI
-        if settings.OPENAI_API_KEY:
-            openai.api_key = settings.OPENAI_API_KEY
-            self.openai_client = openai
-            print("OpenAI configured.")
-        
-        # Setup Gemini
-        if settings.GEMINI_API_KEY:
-            genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.gemini_configured = True
-            print("Gemini configured.")
+async def recommend_packages(prompt: str, packages_list: list):
+    if not client:
+        return "OpenAI key not set. Cannot generate recommendations."
+    
+    # Construct a prompt that includes packages
+    full_prompt = f"User query: {prompt}\n\nAvailable packages:\n"
+    for p in packages_list:
+        full_prompt += f"- {p['package_name']} (loc: {p.get('location')}, days: {p.get('days')}, budget: {p.get('budget')})\n"
+    full_prompt += "\nReturn best matches with short reasons."
 
-    def get_recommendation(self, query: str, preferences: dict):
-        prompt = f"Suggest a travel package for a user interested in {query}. Preferences: {preferences}. Provide a brief itinerary and estimated budget."
-        
-        # Try OpenAI first
-        if self.openai_client:
-            try:
-                response = self.openai_client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                return response.choices[0].message.content
-            except Exception as e:
-                print(f"OpenAI error: {e}")
-
-        # Try Gemini
-        if self.gemini_configured:
-            try:
-                model = genai.GenerativeModel('gemini-pro')
-                response = model.generate_content(prompt)
-                return response.text
-            except Exception as e:
-                print(f"Gemini error: {e}")
-
-        # Fallback Mock
-        return "Based on your preferences, we recommend a 5-day trip to Bali. Enjoy the beaches and culture! Estimated budget: $800."
-
-ai_service = AIService()
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful travel assistant."},
+                {"role": "user", "content": full_prompt}
+            ],
+            max_tokens=300
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"Error generating recommendation: {str(e)}"
