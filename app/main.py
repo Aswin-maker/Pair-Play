@@ -20,8 +20,6 @@ async def custom_swagger_ui_html():
     return get_swagger_ui_html(
         openapi_url=app.openapi_url,
         title=app.title + " - Swagger UI",
-        swagger_js_url="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js",
-        swagger_css_url="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css",
     )
 
 app.include_router(package_router, prefix="/api", tags=["Packages"])
@@ -32,6 +30,10 @@ app.include_router(ai_router, prefix="/api", tags=["AI"])
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Travel Chatbot Backend! Visit /docs for API documentation."}
 
 if __name__ == "__main__":
     import uvicorn
