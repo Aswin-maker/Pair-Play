@@ -31,3 +31,17 @@ class FeedbackRequest(BaseModel):
     email: EmailStr
     package_name: str
     feedback: str
+
+class OrderRequest(BaseModel):
+    amount: int # in rupees
+
+class PaymentVerificationRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
+class PaymentLinkRequest(BaseModel):
+    amount: int
+    name: str
+    email: EmailStr
+    contact: str

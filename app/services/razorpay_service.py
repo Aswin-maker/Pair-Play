@@ -34,3 +34,26 @@ async def create_payment_link(amount_in_rupees: int, customer: dict, description
     except Exception as e:
         print(f"Razorpay Error: {e}")
         return {"error": str(e)}
+
+async def create_order(amount: int):
+    if not client:
+        return {"error": "Razorpay keys not configured", "order_id": "mock_order_id"}
+    try:
+        order_data = {
+            "amount": amount * 100,  # Convert to paise
+            "currency": "INR",
+            "payment_capture": 1
+        }
+        order = client.order.create(order_data)
+        return order
+    except Exception as e:
+        return {"error": str(e)}
+
+def verify_payment(params_dict: dict):
+    if not client:
+        return True # Mock success
+    try:
+        client.utility.verify_payment_signature(params_dict)
+        return True
+    except Exception:
+        return False
