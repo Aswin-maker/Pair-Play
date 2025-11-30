@@ -1,14 +1,29 @@
 import os, random
-import vonage
 from app.config import settings
 
-# Initialize client only if keys are present to avoid errors during startup if keys are missing
-if settings.VONAGE_API_KEY and settings.VONAGE_API_SECRET:
-    client = vonage.Client(key=settings.VONAGE_API_KEY, secret=settings.VONAGE_API_SECRET)
-    sms = vonage.Sms(client)
-else:
-    client = None
-    sms = None
+# Lazy, defensive Vonage setup: avoid import-time crashes on server
+_vonage_client = None
+_vonage_sms = None
+
+def _init_vonage():
+    global _vonage_client, _vonage_sms
+    if _vonage_sms is not None:
+        return
+    try:
+        import vonage
+        # SDKs vary; prefer classic Client/Sms if available
+        if hasattr(vonage, "Client") and hasattr(vonage, "Sms") and settings.VONAGE_API_KEY and settings.VONAGE_API_SECRET:
+            _vonage_client = vonage.Client(key=settings.VONAGE_API_KEY, secret=settings.VONAGE_API_SECRET)
+            _vonage_sms = vonage.Sms(_vonage_client)
+        else:
+            # Unsupported SDK or missing credentials; keep as mock
+            _vonage_client = None
+            _vonage_sms = None
+    except Exception as e:
+        # Import errors or API differences → use mock
+        print(f"Vonage init skipped: {e}")
+        _vonage_client = None
+        _vonage_sms = None
 
 # In-memory store for demo. Replace by a DB for production.
 otp_store = {}
@@ -17,9 +32,10 @@ async def send_otp(phone: str) -> int:
     otp = random.randint(100000, 999999)
     text = f"Your TravelBot OTP is {otp}"
     
-    if sms:
+    _init_vonage()
+    if _vonage_sms:
         try:
-            response = sms.send_message({
+            response = _vonage_sms.send_message({
                 "from": settings.VONAGE_SMS_NUMBER,
                 "to": phone,
                 "text": text
