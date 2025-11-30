@@ -1,19 +1,44 @@
 import os
+import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from app.config import settings
 
 def get_sheets_service():
-    if not os.path.exists(settings.GOOGLE_SHEETS_CREDENTIALS_JSON):
-        # Fallback or error handling if file doesn't exist
-        # For now, we assume it exists or let it raise FileNotFoundError
-        pass
-        
-    creds = service_account.Credentials.from_service_account_file(
-        settings.GOOGLE_SHEETS_CREDENTIALS_JSON,
-        scopes=["https://www.googleapis.com/auth/spreadsheets",
-                "https://www.googleapis.com/auth/drive"]
-    )
+    creds = None
+    # Option A: Load credentials from env var string (preferred on Railway)
+    env_json = os.getenv("GOOGLE_CREDENTIALS_JSON_STRING")
+    if env_json:
+        try:
+            info = json.loads(env_json)
+            creds = service_account.Credentials.from_service_account_info(
+                info,
+                scopes=[
+                    "https://www.googleapis.com/auth/spreadsheets",
+                    "https://www.googleapis.com/auth/drive",
+                ],
+            )
+        except Exception as e:
+            print(f"Google Creds from env failed: {e}")
+
+    # Option B: Fallback to file path if configured and exists
+    if creds is None and settings.GOOGLE_SHEETS_CREDENTIALS_JSON:
+        try:
+            if os.path.exists(settings.GOOGLE_SHEETS_CREDENTIALS_JSON):
+                creds = service_account.Credentials.from_service_account_file(
+                    settings.GOOGLE_SHEETS_CREDENTIALS_JSON,
+                    scopes=[
+                        "https://www.googleapis.com/auth/spreadsheets",
+                        "https://www.googleapis.com/auth/drive",
+                    ],
+                )
+        except Exception as e:
+            print(f"Google Creds from file failed: {e}")
+
+    if creds is None:
+        # Return a dummy builder that will trigger exceptions caught by callers
+        raise FileNotFoundError("Google service account credentials not provided.")
+
     return build("sheets", "v4", credentials=creds)
 
 async def read_values(range_name: str):
