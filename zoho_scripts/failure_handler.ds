@@ -1,0 +1,33 @@
+// ============================================================
+// CONFIGURATION
+// ============================================================
+backend_base_url = "https://travel-chatbot.up.railway.app";
+
+response = Map();
+
+// Check if the failed action was a "forward" attempt
+if(failed_response.get("action").equalsIgnoreCase("forward"))
+{
+    code = cause.get("code").toNumber();
+    
+    // 1001: Outside Business Hours
+    if(code == 1001)
+    {
+        response.put("action","reply");
+        response.put("replies",{"We are currently outside our business hours.", "But don't worry! We have your details and will contact you as soon as we're back online. 🕒"});
+    }
+    // 1002: Agents Busy / 1003: Operators Unavailable
+    else if(code == 1002 || code == 1003)
+    {
+        response.put("action","reply");
+        response.put("replies",{"All our agents are currently assisting other travelers.", "We have received your request and will reach out to you shortly via email or phone. 📞"});
+    }
+    // General Fallback for other errors
+    else
+    {
+        response.put("action","reply");
+        response.put("replies",{"Sorry, we faced a technical glitch connecting you.", "Please leave a message or try again later."});
+    }
+}
+
+return response;

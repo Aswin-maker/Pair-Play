@@ -1,0 +1,16 @@
+// ============================================================
+// CONFIGURATION
+// ============================================================
+backend_base_url = "https://travel-chatbot.up.railway.app";
+
+response = Map();
+response.put("action","reply");
+response.put("replies",{"Hello there! 👋 Welcome to our Travel Assistant. How can I help you today?"});
+
+// These suggestions match the logic in your Message Handler:
+// 1. "I'm new here, just browsing" -> Triggers Browsing Context
+// 2. "I want a product demo"       -> Triggers Demo Context
+// 3. "Help"                        -> Triggers Help Message
+response.put("suggestions",{"I'm new here, just browsing", "I want a product demo", "Help"});
+
+return response;

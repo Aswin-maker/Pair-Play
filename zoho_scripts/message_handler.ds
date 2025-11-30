@@ -1,0 +1,97 @@
+// ============================================================
+// CONFIGURATION
+// ============================================================
+backend_base_url = "https://travel-chatbot.up.railway.app";
+
+response = Map();
+msg = message.get("text");
+op = "chat";
+if(message.containKey("operation")) {
+    op = message.get("operation");
+}
+
+// 🧠 Define fallback suggestions
+default_suggestions = {"Explore Packages", "Contact Support", "Help"};
+
+// 🟢 1. Handle "chat" operation
+if(op.equalsIgnoreCase("chat"))
+{
+    // ------------------------------------------------------------
+    // A. Check Predefined Menu Options FIRST (Save API calls)
+    // ------------------------------------------------------------
+    
+    if(msg.equalsIgnoreCase("I'm new here, just browsing") || msg.equalsIgnoreCase("Explore Packages"))
+    {
+        response.put("action","context");
+        response.put("context_id","browsing");
+        question = {"name":"browsing",
+                    "replies":{"Great! Here’s a quick interactive guide. 👇"},
+                    "suggestions":{"Show travel packages", "Talk to an agent"}};
+        response.put("questions",{question});
+        return response;
+    }
+    else if(msg.equalsIgnoreCase("I want a product demo") || msg.equalsIgnoreCase("Contact Support"))
+    {
+        response.put("action","context");
+        response.put("context_id","demo");
+        question = {"name":"time",
+                    "replies":{"📅 When would you like to schedule a travel planning session?"}, 
+                    "input":{"type":"calendar"}};
+        response.put("questions",{question});
+        return response;
+    }
+    else if(msg.equalsIgnoreCase("Help"))
+    {
+        response.put("action", "reply");
+        response.put("replies", {"I can help you find travel packages, book trips, or answer questions. Just type what you're looking for!"});
+        response.put("suggestions", default_suggestions);
+        return response;
+    }
+
+    // ------------------------------------------------------------
+    // B. AI Fallback for everything else
+    // ------------------------------------------------------------
+    
+    payload = Map();
+    payload.put("text", msg);
+    
+    try 
+    {
+        api_response = invokeurl
+        [
+            url: backend_base_url + "/api/ai-recommend"
+            type: POST
+            parameters: payload.toString() 
+            headers: {"Content-Type": "application/json"}
+        ];
+        
+        recommendation = api_response.get("recommendation");
+
+        if(recommendation != null && recommendation.trim() != "")
+        {
+            response.put("action", "reply");
+            response.put("replies", {recommendation});
+            response.put("suggestions", default_suggestions);
+        }
+        else
+        {
+            response.put("action", "reply");
+            response.put("replies", {"I couldn't process that right now. Try rephrasing or choose an option below."});
+            response.put("suggestions", default_suggestions);
+        }
+    }
+    catch (e)
+    {
+        response.put("action", "reply");
+        response.put("replies", {"⚠ Unable to connect to the travel assistant. Please try again."});
+        response.put("suggestions", default_suggestions);
+    }
+    
+    return response;
+}
+
+// 🔴 3. Default fallback
+response.put("action", "reply");
+response.put("replies", {"Let me know how I can help you!"});
+response.put("suggestions", default_suggestions);
+return response;

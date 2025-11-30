@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_ID: str = ""
     RAZORPAY_KEY_SECRET: str = ""
 
-    OPENAI_API_KEY: str = ""
     GEMINI_API_KEY: str = ""
 
     SECRET_KEY: str = "replace_with_random_string"
