@@ -6,7 +6,7 @@ backend_base_url = "https://travel-chatbot.up.railway.app";
 response = Map();
 msg = message.get("text");
 op = "chat";
-if(message.containKey("operation")) {
+if(message.containsKey("operation")) {
     op = message.get("operation");
 }
 

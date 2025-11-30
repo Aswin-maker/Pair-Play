@@ -1,0 +1,12 @@
+[build]
+# Use Nixpacks (default) to auto-detect Python
+builder = "NIXPACKS"
+
+[deploy]
+# Start command for FastAPI/uvicorn
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+
+[variables]
+# Pin Python version (optional; Railway also detects automatically)
+PYTHON_VERSION = "3.10"
+# Add your secrets via Railway dashboard or CLI instead of storing here.

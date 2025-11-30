@@ -1,15 +1,27 @@
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000';
+const envBase = (import.meta.env.VITE_BACKEND_URL || '').trim();
+const BASE_URL = envBase || (typeof window !== 'undefined' && window.location && window.location.port === '5173'
+  ? ''
+  : 'http://127.0.0.1:8000');
 
 async function request(path, options = {}) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(options.headers||{}) },
+  const url = `${BASE_URL}${path}`;
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     ...options
   });
+
+  const contentType = res.headers.get('content-type') || '';
+
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Request failed ${res.status}: ${text}`);
+    const text = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status} ${res.statusText} at ${url}: ${text}`);
   }
-  return res.json();
+
+  if (contentType.includes('application/json')) {
+    return res.json();
+  }
+  const text = await res.text().catch(() => '');
+  throw new Error(`Expected JSON but received ${contentType || 'unknown'} from ${url}: ${text.slice(0, 200)}`);
 }
 
 export async function fetchPackages() {

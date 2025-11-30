@@ -6,9 +6,25 @@ from app.config import settings
 
 def get_sheets_service():
     creds = None
-    # Option A: Load credentials from env var string (preferred on Railway)
+    # Option A1: Base64 encoded full JSON (robust for multiline in CLI)
+    b64_json = os.getenv("GOOGLE_CREDENTIALS_JSON_B64")
+    if b64_json and not creds:
+        try:
+            decoded = json.loads(
+                (base64.b64decode(b64_json)).decode("utf-8")
+            )
+            creds = service_account.Credentials.from_service_account_info(
+                decoded,
+                scopes=[
+                    "https://www.googleapis.com/auth/spreadsheets",
+                    "https://www.googleapis.com/auth/drive",
+                ],
+            )
+        except Exception as e:
+            print(f"Google Creds from b64 env failed: {e}")
+    # Option A2: Load credentials from raw JSON string env var
     env_json = os.getenv("GOOGLE_CREDENTIALS_JSON_STRING")
-    if env_json:
+    if env_json and not creds:
         try:
             info = json.loads(env_json)
             creds = service_account.Credentials.from_service_account_info(

@@ -4,23 +4,53 @@
     <meta charset="UTF-8" />
     <title>Travel Chatbot Frontend</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Zoho SalesIQ Widget -->
     <script>window.$zoho=window.$zoho||{};$zoho.salesiq=$zoho.salesiq||{ready:function(){}};</script>
     <script id="zsiqscript" src="https://salesiq.zohopublic.in/widget?wc=siq74780f15b1bcc23f51fa83e0facc6140c3461962476fd8087fd846512dd39560" defer></script>
     <style>
-      body { font-family: system-ui, Arial, sans-serif; margin:0; background:#f7f9fc; color:#222; }
-      header { background:#0d47a1; color:#fff; padding:1rem 1.5rem; }
-      a { color:#0d47a1; }
+      :root{
+        --brand:#2e7d32;           /* green 800 */
+        --brand-600:#43a047;       /* green 600 */
+        --brand-100:#e8f5e9;       /* green 50 */
+        --ink:#1f2937;             /* gray 800 */
+        --muted:#6b7280;           /* gray 500 */
+        --card:#ffffff;
+        --shadow:0 2px 8px rgba(0,0,0,0.08);
+      }
+      body { font-family: system-ui, Arial, sans-serif; margin:0; background:var(--brand-100); color:var(--ink); }
+      header { background:var(--brand); color:#fff; padding:1rem 1.5rem; }
+      a { color:var(--brand); text-decoration:none; }
+      a:hover { text-decoration:underline; }
       .container { max-width:1200px; margin:0 auto; padding:1rem 1.25rem; }
+      .hero { position:relative; background:linear-gradient(0deg, rgba(46,125,50,0.15), rgba(46,125,50,0.15)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop'); background-size:cover; background-position:center; min-height:280px; display:flex; align-items:center; }
+      .hero .container { padding:2.5rem 1.25rem; }
+      .hero h2 { color:#fff; margin:0 0 0.5rem; text-shadow:0 1px 2px rgba(0,0,0,0.35); font-weight:800; letter-spacing:.2px; }
+      .hero p { color:#f0fff0; margin:0; max-width:720px; text-shadow:0 1px 2px rgba(0,0,0,0.25); }
       .grid { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
-      .card { background:#fff; border-radius:8px; padding:1rem; box-shadow:0 2px 6px rgba(0,0,0,0.08); display:flex; flex-direction:column; }
-      .card img { width:100%; height:160px; object-fit:cover; border-radius:6px; margin-bottom:0.5rem; }
-      .badge { display:inline-block; background:#e3f2fd; color:#0d47a1; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.75rem; font-weight:600; }
-      footer { text-align:center; font-size:0.8rem; padding:2rem 0; color:#555; }
+      .card { background:var(--card); border-radius:10px; padding:1rem; box-shadow:var(--shadow); display:flex; flex-direction:column; }
+      .card img { width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:0.5rem; }
+      .badge { display:inline-block; background:#c8e6c9; color:var(--brand); padding:0.25rem 0.5rem; border-radius:999px; font-size:0.75rem; font-weight:700; }
+      .btn { appearance:none; border:0; background:var(--brand); color:#fff; padding:0.6rem 0.9rem; border-radius:8px; font-weight:700; cursor:pointer; transition:transform .06s ease, background .2s ease; }
+      .btn:hover { background:var(--brand-600); }
+      .btn:active { transform:translateY(1px); }
+      footer { text-align:center; font-size:0.85rem; padding:2rem 0; color:var(--muted); }
+      /* Responsive */
+      @media (max-width: 640px){
+        .hero{ min-height:220px; }
+        .card img{ height:160px; }
+        .container{ padding:0.85rem 1rem; }
+      }
     </style>
   </head>
   <body>
     <header><h1>Travel Chatbot Portal</h1></header>
+    <section class="hero" role="img" aria-label="Travel destinations collage with greenery">
+      <div class="container">
+        <h2>Plan Your Next Getaway</h2>
+        <p>Discover curated packages tailored to your budget and days, with a fresh, light‑green feel across the site.</p>
+      </div>
+    </section>
     <div id="root"></div>
     <footer>© 2025 Travel Chatbot</footer>
     <script type="module" src="/src/main.jsx"></script>
